@@ -2,7 +2,10 @@
 
 > This plugin only works on tauri v2, if you need the v1 plugin, feel free to submit a PR!
 
-Extended support for file and directory operations.
+What is the difference from [tauri-plugin-fs-extra](https://github.com/tauri-apps/tauri-plugin-fs-extra)?
+`tauri-plugin-fs-extra` only supports files, `tauri-plugin-fs-pro` supports files and directories. And there are some extra [methods](#methods) provided.
+
+https://github.com/user-attachments/assets/90207b4e-34d2-45ea-acda-c3bfc6ca7caf
 
 ## Install
 

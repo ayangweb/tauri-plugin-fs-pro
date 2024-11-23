@@ -2,7 +2,7 @@
   "name": "tauri-plugin-fs-pro-api",
   "version": "2.0.0",
   "author": "ayangweb",
-  "description": "Extended support for file and directory operations.",
+  "description": "Extended with additional methods for files and directories",
   "keywords": [
     "fs-extra",
     "fs-pro",
