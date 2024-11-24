@@ -2,8 +2,9 @@
 
 > This plugin only works on tauri v2, if you need the v1 plugin, feel free to submit a PR!
 
-What is the difference from [tauri-plugin-fs-extra](https://github.com/tauri-apps/tauri-plugin-fs-extra)?
-`tauri-plugin-fs-extra` only supports files, `tauri-plugin-fs-pro` supports files and directories. And there are some extra [methods](#methods) provided.
+**What is the difference with `@tauri-apps/plugin-fs`?**
+
+The `stat` method of `@tauri-apps/plugin-fs` supports only files when getting size, while the `metadata` method of `tauri-plugin-fs-pro` supports both files and directories when getting size. And some additional [methods](#methods) are provided. More methods will be expanded in the future.
 
 https://github.com/user-attachments/assets/90207b4e-34d2-45ea-acda-c3bfc6ca7caf
 
