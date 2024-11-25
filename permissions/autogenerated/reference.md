@@ -7,6 +7,7 @@ Default permissions for the plugin
 - `allow-is-file`
 - `allow-size`
 - `allow-name`
+- `allow-full-name`
 - `allow-extname`
 - `allow-metadata`
 - `allow-open`
@@ -42,6 +43,32 @@ Enables the extname command without any pre-configured scope.
 <td>
 
 Denies the extname command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`fs-pro:allow-full-name`
+
+</td>
+<td>
+
+Enables the full_name command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`fs-pro:deny-full-name`
+
+</td>
+<td>
+
+Denies the full_name command without any pre-configured scope.
 
 </td>
 </tr>

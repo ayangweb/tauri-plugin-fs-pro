@@ -305,6 +305,16 @@
           "const": "deny-extname"
         },
         {
+          "description": "Enables the full_name command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-full-name"
+        },
+        {
+          "description": "Denies the full_name command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-full-name"
+        },
+        {
           "description": "Enables the is_dir command without any pre-configured scope.",
           "type": "string",
           "const": "allow-is-dir"

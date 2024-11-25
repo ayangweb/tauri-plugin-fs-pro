@@ -13,6 +13,10 @@ export interface Metadata {
    */
   name: string;
   /**
+   * The file or directory name of the path, including the extension name if it is a file.
+   */
+  fullName: string;
+  /**
    * The extension name of the path.
    */
   extname: string;
@@ -78,6 +82,7 @@ export const FS_PRO_COMMAND = {
   IS_FILE: "plugin:fs-pro|is_file",
   SIZE: "plugin:fs-pro|size",
   NAME: "plugin:fs-pro|name",
+  FULL_NAME: "plugin:fs-pro|full_name",
   EXTNAME: "plugin:fs-pro|extname",
   METADATA: "plugin:fs-pro|metadata",
   OPEN: "plugin:fs-pro|open",
@@ -136,6 +141,17 @@ export const size = (path: string) => {
  */
 export const name = (path: string) => {
   return invoke<string>(FS_PRO_COMMAND.NAME, { path });
+};
+
+/**
+ * Get the file or directory name of the path, including the extension name if it is a file.
+ * @example
+ * import { fullName } from "tauri-plugin-fs-pro-api"
+ * const name = await fullName("/Users/xxx/EcoPaste.txt")
+ * console.log(name) // "EcoPaste.txt"
+ */
+export const fullName = (path: string) => {
+  return invoke<string>(FS_PRO_COMMAND.FULL_NAME, { path });
 };
 
 /**

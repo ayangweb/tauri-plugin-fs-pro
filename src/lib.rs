@@ -15,6 +15,7 @@ pub fn init<R: Runtime>() -> TauriPlugin<R> {
             commands::is_file,
             commands::size,
             commands::name,
+            commands::full_name,
             commands::extname,
             commands::metadata,
             commands::open,

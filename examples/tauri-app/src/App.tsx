@@ -5,6 +5,7 @@ import {
   isFile,
   size,
   name,
+  fullName,
   extname,
   metadata,
   open,
@@ -38,6 +39,7 @@ const App = () => {
       isFile: await isFile(path),
       size: filesize(await size(path), { standard: "jedec" }),
       name: await name(path),
+      fullName: await fullName(path),
       extname: await extname(path),
       metadata: await metadata(path),
     });

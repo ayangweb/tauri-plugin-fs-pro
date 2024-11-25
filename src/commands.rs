@@ -16,6 +16,8 @@ pub struct Metadata {
     pub size: u64,
     // The file or directory name of the path.
     pub name: String,
+    // The file or directory name of the path, including the extension name if it is a file.
+    pub full_name: String,
     // The extension name of the path.
     pub extname: String,
     // Whether the path is a directory.
@@ -86,6 +88,14 @@ pub async fn name(path: PathBuf) -> String {
         .unwrap_or_default()
 }
 
+// Get the file or directory name of the path, including the extension name if it is a file.
+#[command]
+pub async fn full_name(path: PathBuf) -> String {
+    path.file_name()
+        .map(|name| name.to_string_lossy().to_string())
+        .unwrap_or_default()
+}
+
 // Get the extension name of the path.
 #[command]
 pub async fn extname(path: PathBuf) -> String {
@@ -118,6 +128,7 @@ pub async fn metadata(path: PathBuf, options: Option<MetadataOptions>) -> Result
         false => size(path.clone()).await,
     };
     let name = name(path.clone()).await;
+    let full_name = full_name(path.clone()).await;
     let extname = extname(path.clone()).await;
 
     let is_dir = path.is_dir();
@@ -127,7 +138,7 @@ pub async fn metadata(path: PathBuf, options: Option<MetadataOptions>) -> Result
     let is_absolute = path.is_absolute();
     let is_relative = path.is_relative();
 
-    let metadata = fs::metadata(path).map_err(|error| error.to_string())?;
+    let metadata = fs::metadata(path).map_err(|err| err.to_string())?;
     let accessed_at = system_time_to_unix_millis(metadata.accessed());
     let created_at = system_time_to_unix_millis(metadata.created());
     let modified_at = system_time_to_unix_millis(metadata.modified());
@@ -135,6 +146,7 @@ pub async fn metadata(path: PathBuf, options: Option<MetadataOptions>) -> Result
     Ok(Metadata {
         size,
         name,
+        full_name,
         extname,
         is_dir,
         is_file,

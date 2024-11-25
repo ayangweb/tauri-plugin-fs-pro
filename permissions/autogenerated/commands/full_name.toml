@@ -1,0 +1,13 @@
+# Automatically generated - DO NOT EDIT!
+
+"$schema" = "../../schemas/schema.json"
+
+[[permission]]
+identifier = "allow-full-name"
+description = "Enables the full_name command without any pre-configured scope."
+commands.allow = ["full_name"]
+
+[[permission]]
+identifier = "deny-full-name"
+description = "Denies the full_name command without any pre-configured scope."
+commands.deny = ["full_name"]

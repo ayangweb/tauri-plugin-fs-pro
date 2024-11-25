@@ -2,4 +2,4 @@
 
 [default]
 description = "Default permissions for the plugin"
-permissions = ["allow-is-exist","allow-is-dir", "allow-is-file", "allow-size", "allow-name", "allow-extname", "allow-metadata", "allow-open"]
+permissions = ["allow-is-exist","allow-is-dir", "allow-is-file", "allow-size", "allow-name", "allow-full-name", "allow-extname", "allow-metadata", "allow-open"]

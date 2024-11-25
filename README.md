@@ -56,16 +56,17 @@ console.log(yes); // true
 
 ## Methods
 
-| Method     | Description                                                   |
-| ---------- | ------------------------------------------------------------- |
-| `isExist`  | Whether the path exists.                                      |
-| `isDir`    | Whether the path is a directory.                              |
-| `isFile`   | Whether the path is a file.                                   |
-| `size`     | Get the size of the path in bytes, or 0 if it does not exist. |
-| `name`     | Get the file or directory name of the path.                   |
-| `extname`  | Get the extension name of the file.                           |
-| `metadata` | Get the metadata of the path.                                 |
-| `open`     | Open the path in File Explorer or the default application.    |
+| Method     | Description                                                                               |
+| ---------- | ----------------------------------------------------------------------------------------- |
+| `isExist`  | Whether the path exists.                                                                  |
+| `isDir`    | Whether the path is a directory.                                                          |
+| `isFile`   | Whether the path is a file.                                                               |
+| `size`     | Get the size of the path in bytes, or 0 if it does not exist.                             |
+| `name`     | Get the file or directory name of the path.                                               |
+| `fullName` | Get the file or directory name of the path, including the extension name if it is a file. |
+| `extname`  | Get the extension name of the file.                                                       |
+| `metadata` | Get the metadata of the path.                                                             |
+| `open`     | Open the path in File Explorer or the default application.                                |
 
 ## Example
 
