@@ -8,6 +8,9 @@ const COMMANDS: &[&str] = &[
     "extname",
     "metadata",
     "open",
+    "compress",
+    "decompress",
+    "transfer",
 ];
 
 fn main() {

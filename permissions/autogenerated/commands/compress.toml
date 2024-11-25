@@ -1,0 +1,13 @@
+# Automatically generated - DO NOT EDIT!
+
+"$schema" = "../../schemas/schema.json"
+
+[[permission]]
+identifier = "allow-compress"
+description = "Enables the compress command without any pre-configured scope."
+commands.allow = ["compress"]
+
+[[permission]]
+identifier = "deny-compress"
+description = "Denies the compress command without any pre-configured scope."
+commands.deny = ["compress"]

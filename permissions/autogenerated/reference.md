@@ -11,6 +11,9 @@ Default permissions for the plugin
 - `allow-extname`
 - `allow-metadata`
 - `allow-open`
+- `allow-compress`
+- `allow-decompress`
+- `allow-transfer`
 
 ## Permission Table
 
@@ -20,6 +23,58 @@ Default permissions for the plugin
 <th>Description</th>
 </tr>
 
+
+<tr>
+<td>
+
+`fs-pro:allow-compress`
+
+</td>
+<td>
+
+Enables the compress command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`fs-pro:deny-compress`
+
+</td>
+<td>
+
+Denies the compress command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`fs-pro:allow-decompress`
+
+</td>
+<td>
+
+Enables the decompress command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`fs-pro:deny-decompress`
+
+</td>
+<td>
+
+Denies the decompress command without any pre-configured scope.
+
+</td>
+</tr>
 
 <tr>
 <td>
@@ -251,6 +306,32 @@ Enables the size command without any pre-configured scope.
 <td>
 
 Denies the size command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`fs-pro:allow-transfer`
+
+</td>
+<td>
+
+Enables the transfer command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`fs-pro:deny-transfer`
+
+</td>
+<td>
+
+Denies the transfer command without any pre-configured scope.
 
 </td>
 </tr>

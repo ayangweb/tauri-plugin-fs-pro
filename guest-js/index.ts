@@ -76,6 +76,28 @@ export interface OpenOptions {
   enterDir?: boolean;
 }
 
+export interface CompressOptions {
+  /**
+   * The name of the file or directory to be compressed.
+   */
+  includes?: string[];
+  /**
+   * The name of the file or directory not to be compressed.
+   */
+  excludes?: string[];
+}
+
+export interface TransferOptions {
+  /**
+   * The name of the file or directory to be moved.
+   */
+  includes?: string[];
+  /**
+   * The name of the file or directory not to be moved.
+   */
+  excludes?: string[];
+}
+
 export const FS_PRO_COMMAND = {
   IS_EXIST: "plugin:fs-pro|is_exist",
   IS_DIR: "plugin:fs-pro|is_dir",
@@ -86,6 +108,9 @@ export const FS_PRO_COMMAND = {
   EXTNAME: "plugin:fs-pro|extname",
   METADATA: "plugin:fs-pro|metadata",
   OPEN: "plugin:fs-pro|open",
+  COMPRESS: "plugin:fs-pro|compress",
+  DECOMPRESS: "plugin:fs-pro|decompress",
+  TRANSFER: "plugin:fs-pro|transfer",
 };
 
 /**
@@ -96,7 +121,9 @@ export const FS_PRO_COMMAND = {
  * console.log(yes) // true
  */
 export const isExist = (path: string) => {
-  return invoke<boolean>(FS_PRO_COMMAND.IS_EXIST, { path });
+  return invoke<boolean>(FS_PRO_COMMAND.IS_EXIST, {
+    path,
+  });
 };
 
 /**
@@ -107,7 +134,9 @@ export const isExist = (path: string) => {
  * console.log(yes) // true
  */
 export const isDir = (path: string) => {
-  return invoke<boolean>(FS_PRO_COMMAND.IS_DIR, { path });
+  return invoke<boolean>(FS_PRO_COMMAND.IS_DIR, {
+    path,
+  });
 };
 
 /**
@@ -118,7 +147,9 @@ export const isDir = (path: string) => {
  * console.log(yes) // true
  */
 export const isFile = (path: string) => {
-  return invoke<boolean>(FS_PRO_COMMAND.IS_FILE, { path });
+  return invoke<boolean>(FS_PRO_COMMAND.IS_FILE, {
+    path,
+  });
 };
 
 /**
@@ -129,7 +160,9 @@ export const isFile = (path: string) => {
  * console.log(fileSize) // 1024
  */
 export const size = (path: string) => {
-  return invoke<number>(FS_PRO_COMMAND.SIZE, { path });
+  return invoke<number>(FS_PRO_COMMAND.SIZE, {
+    path,
+  });
 };
 
 /**
@@ -140,7 +173,9 @@ export const size = (path: string) => {
  * console.log(fileName) // "EcoPaste"
  */
 export const name = (path: string) => {
-  return invoke<string>(FS_PRO_COMMAND.NAME, { path });
+  return invoke<string>(FS_PRO_COMMAND.NAME, {
+    path,
+  });
 };
 
 /**
@@ -151,7 +186,9 @@ export const name = (path: string) => {
  * console.log(name) // "EcoPaste.txt"
  */
 export const fullName = (path: string) => {
-  return invoke<string>(FS_PRO_COMMAND.FULL_NAME, { path });
+  return invoke<string>(FS_PRO_COMMAND.FULL_NAME, {
+    path,
+  });
 };
 
 /**
@@ -162,7 +199,9 @@ export const fullName = (path: string) => {
  * console.log(ext) // "txt"
  */
 export const extname = (path: string) => {
-  return invoke<string>(FS_PRO_COMMAND.EXTNAME, { path });
+  return invoke<string>(FS_PRO_COMMAND.EXTNAME, {
+    path,
+  });
 };
 
 /**
@@ -177,7 +216,10 @@ export const extname = (path: string) => {
  * @returns return {@linkcode Metadata}
  */
 export const metadata = (path: string, options?: MetadataOptions) => {
-  return invoke<Metadata>(FS_PRO_COMMAND.METADATA, { path, options });
+  return invoke<Metadata>(FS_PRO_COMMAND.METADATA, {
+    path,
+    options,
+  });
 };
 
 /**
@@ -191,5 +233,61 @@ export const metadata = (path: string, options?: MetadataOptions) => {
  * await open("/Users/xxx/EcoPaste.txt", { explorer: true }) // open in file explorer
  */
 export const open = (path: string, options?: OpenOptions) => {
-  return invoke(FS_PRO_COMMAND.OPEN, { path, options });
+  return invoke(FS_PRO_COMMAND.OPEN, {
+    path,
+    options,
+  });
+};
+
+/**
+ * Compress the source path into a tar.gz file to the destination path.
+ * @param options.includes The name of the file or directory to be compressed.
+ * @param options.excludes The name of the file or directory not to be compressed.
+ * @example
+ * import { compress } from "tauri-plugin-fs-pro-api"
+ * await compress("/Users/xxx/EcoPaste", "/Download/xxx/EcoPaste.tar.gz", { excludes: ["file.txt", "dir"] })
+ */
+export const compress = (
+  srcPath: string,
+  dstPath: string,
+  options?: CompressOptions
+) => {
+  return invoke(FS_PRO_COMMAND.COMPRESS, {
+    srcPath,
+    dstPath,
+    options,
+  });
+};
+
+/**
+ * Decompress the tar.gz file from the source path to the destination path.
+ * @example
+ * import { decompress } from "tauri-plugin-fs-pro-api"
+ * await decompress("/Download/xxx/EcoPaste.tar.gz", "/Users/xxx/EcoPaste")
+ */
+export const decompress = (srcPath: string, dstPath: string) => {
+  return invoke(FS_PRO_COMMAND.DECOMPRESS, {
+    srcPath,
+    dstPath,
+  });
+};
+
+/**
+ * Move the source path to the destination path.
+ * @param options.includes The name of the file or directory to be moved.
+ * @param options.excludes The name of the file or directory not to be moved.
+ * @example
+ * import { transfer } from "tauri-plugin-fs-pro-api"
+ * await transfer("/Users/xxx/EcoPaste", "/Download/xxx/EcoPaste", { excludes: ["file.txt", "dir"] })
+ */
+export const transfer = (
+  srcPath: string,
+  dstPath: string,
+  options?: TransferOptions
+) => {
+  return invoke(FS_PRO_COMMAND.TRANSFER, {
+    srcPath,
+    dstPath,
+    options,
+  });
 };

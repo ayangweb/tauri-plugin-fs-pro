@@ -295,6 +295,26 @@
       "type": "string",
       "oneOf": [
         {
+          "description": "Enables the compress command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-compress"
+        },
+        {
+          "description": "Denies the compress command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-compress"
+        },
+        {
+          "description": "Enables the decompress command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-decompress"
+        },
+        {
+          "description": "Denies the decompress command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-decompress"
+        },
+        {
           "description": "Enables the extname command without any pre-configured scope.",
           "type": "string",
           "const": "allow-extname"
@@ -383,6 +403,16 @@
           "description": "Denies the size command without any pre-configured scope.",
           "type": "string",
           "const": "deny-size"
+        },
+        {
+          "description": "Enables the transfer command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-transfer"
+        },
+        {
+          "description": "Denies the transfer command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-transfer"
         },
         {
           "description": "Default permissions for the plugin",
