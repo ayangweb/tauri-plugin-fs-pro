@@ -87,7 +87,7 @@ const App = () => {
                     });
                   }}
                 >
-                  Folder Explorer
+                  File Explorer
                 </Button>
                 {state.isDir && (
                   <Button

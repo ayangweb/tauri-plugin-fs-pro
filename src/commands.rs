@@ -40,10 +40,17 @@ pub struct Metadata {
 
 #[derive(Debug, serde::Deserialize)]
 #[serde(rename_all = "camelCase")]
+pub struct MetadataOptions {
+    // When getting the metadata of a path, if you don't need to calculate the size, you can omit it to save time and return 0 after omitting it.
+    pub omit_size: Option<bool>,
+}
+
+#[derive(Debug, serde::Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct OpenOptions {
-    // Whether to open in Folder Explorer.
+    // Whether to open in file explorer.
     pub explorer: Option<bool>,
-    // If the path is a directory, does it go directly to the directory.
+    // If the path is a directory, does it go directly into the directory.
     pub enter_dir: Option<bool>,
 }
 
@@ -100,8 +107,16 @@ fn system_time_to_unix_millis(time: io::Result<SystemTime>) -> u128 {
 
 // Get the metadata of the path.
 #[command]
-pub async fn metadata(path: PathBuf) -> Result<Metadata, String> {
-    let size = size(path.clone()).await;
+pub async fn metadata(path: PathBuf, options: Option<MetadataOptions>) -> Result<Metadata, String> {
+    let options = options.unwrap_or(MetadataOptions {
+        omit_size: Some(false),
+    });
+    let omit_size = options.omit_size.unwrap_or(false);
+
+    let size = match omit_size {
+        true => 0,
+        false => size(path.clone()).await,
+    };
     let name = name(path.clone()).await;
     let extname = extname(path.clone()).await;
 
@@ -133,19 +148,17 @@ pub async fn metadata(path: PathBuf) -> Result<Metadata, String> {
     })
 }
 
-// Open the path in File Explorer or the default application.
+// Open the path in file explorer or the default application.
 #[command]
 pub async fn open<R: Runtime>(
     app_handle: AppHandle<R>,
     path: PathBuf,
     options: Option<OpenOptions>,
 ) -> Result<(), String> {
-    let default_options = OpenOptions {
+    let options = options.unwrap_or(OpenOptions {
         explorer: Some(false),
         enter_dir: Some(false),
-    };
-
-    let options = options.unwrap_or(default_options);
+    });
     let explorer = options.explorer.unwrap_or(false);
     let enter_dir = options.enter_dir.unwrap_or(false);
 

@@ -54,9 +54,16 @@ export interface Metadata {
   modifiedAt: number;
 }
 
+export interface MetadataOptions {
+  /**
+   * When getting the metadata of a path, if you don't need to calculate the size, you can omit it to save time and return 0 after omitting it.
+   */
+  omitSize?: boolean;
+}
+
 export interface OpenOptions {
   /**
-   * Whether to open in Folder Explorer.
+   * Whether to open in file explorer.
    */
   explorer?: boolean;
   /**
@@ -144,25 +151,28 @@ export const extname = (path: string) => {
 
 /**
  * Get the metadata of the path.
+ * @param options.omitSize When getting the metadata of a path, if you don't need to calculate the size, you can omit it to save time and return 0 after omitting it
+ * Defaults to `false`.
  * @example
  * import { metadata } from "tauri-plugin-fs-pro-api"
- * const { isFile } = await metadata("/Users/xxx/EcoPaste.txt")
+ * const { size, isFile } = await metadata("/Users/xxx/EcoPaste.txt", { omitSize: true })
+ * console.log(size) // 0
  * console.log(isFile) // true
  * @returns return {@linkcode Metadata}
  */
-export const metadata = (path: string) => {
-  return invoke<Metadata>(FS_PRO_COMMAND.METADATA, { path });
+export const metadata = (path: string, options?: MetadataOptions) => {
+  return invoke<Metadata>(FS_PRO_COMMAND.METADATA, { path, options });
 };
 
 /**
- * Open the path in File Explorer or the default application.
- * @param options.explorer Whether to open in Folder Explorer
+ * Open the path in file explorer or the default application.
+ * @param options.explorer Whether to open in file explorer
  * Defaults to `false`.
- * @param options.enterDir If the path is a directory, does it go directly to the directory
+ * @param options.enterDir If the path is a directory, does it go directly into the directory
  * Defaults to `false`.
  * @example
  * import { open } from "tauri-plugin-fs-pro-api"
- * await open("/Users/xxx/EcoPaste.txt")
+ * await open("/Users/xxx/EcoPaste.txt", { explorer: true }) // open in file explorer
  */
 export const open = (path: string, options?: OpenOptions) => {
   return invoke(FS_PRO_COMMAND.OPEN, { path, options });
