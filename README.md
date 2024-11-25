@@ -66,7 +66,7 @@ console.log(yes); // true
 | `fullName`   | Get the file or directory name of the path, including the extension name if it is a file. |
 | `extname`    | Get the extension name of the file.                                                       |
 | `metadata`   | Get the metadata of the path.                                                             |
-| `open`       | Open the path in File Explorer or the default application.                                |
+| `open`       | Open the path in file explorer or the default application.                                |
 | `compress`   | Compress the source path into a tar.gz file to the destination path.                      |
 | `decompress` | Decompress the tar.gz file from the source path to the destination path.                  |
 | `transfer`   | Move the source path to the destination path.                                             |
