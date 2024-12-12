@@ -1,4 +1,4 @@
-import { Button, Flex, List } from "antd";
+import { Button, Flex, Image, List } from "antd";
 import {
   isExist,
   isDir,
@@ -7,6 +7,7 @@ import {
   name,
   fullName,
   extname,
+  icon,
   metadata,
   open,
 } from "tauri-plugin-fs-pro-api";
@@ -32,8 +33,13 @@ const App = () => {
 
     if (!path) return;
 
+    const bytes = await icon(path, 512);
+    const blob = new Blob([bytes], { type: "image/png" });
+    const url = URL.createObjectURL(blob);
+
     Object.assign(state, {
       path,
+      icon: url,
       isExist: await isExist(path),
       isDir: await isDir(path),
       isFile: await isFile(path),
@@ -48,12 +54,8 @@ const App = () => {
   return (
     <Flex vertical align="start" gap="middle">
       <Flex gap="middle">
-        <Button type="primary" onClick={() => handleSelect()}>
-          Select file
-        </Button>
-        <Button type="primary" onClick={() => handleSelect(true)}>
-          Select directory
-        </Button>
+        <Button onClick={() => handleSelect()}>Select file</Button>
+        <Button onClick={() => handleSelect(true)}>Select directory</Button>
       </Flex>
 
       {state.isExist && (
@@ -63,11 +65,16 @@ const App = () => {
               return (
                 <List.Item key={key}>
                   <span style={{ minWidth: 100 }}>{key}</span>
-                  <span>
-                    {typeof value === "string"
-                      ? value
-                      : JSON.stringify(value, null, 2)}
-                  </span>
+
+                  {key === "icon" ? (
+                    <Image width={50} src={value as string} />
+                  ) : (
+                    <span>
+                      {typeof value === "string"
+                        ? value
+                        : JSON.stringify(value, null, 2)}
+                    </span>
+                  )}
                 </List.Item>
               );
             })}

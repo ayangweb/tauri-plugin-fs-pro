@@ -335,6 +335,16 @@
           "const": "deny-full-name"
         },
         {
+          "description": "Enables the icon command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-icon"
+        },
+        {
+          "description": "Denies the icon command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-icon"
+        },
+        {
           "description": "Enables the is_dir command without any pre-configured scope.",
           "type": "string",
           "const": "allow-is-dir"

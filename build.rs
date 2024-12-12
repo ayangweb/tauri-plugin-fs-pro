@@ -6,6 +6,7 @@ const COMMANDS: &[&str] = &[
     "name",
     "full_name",
     "extname",
+    "icon",
     "metadata",
     "open",
     "compress",

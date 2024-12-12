@@ -9,6 +9,7 @@ Default permissions for the plugin
 - `allow-name`
 - `allow-full-name`
 - `allow-extname`
+- `allow-icon`
 - `allow-metadata`
 - `allow-open`
 - `allow-compress`
@@ -124,6 +125,32 @@ Enables the full_name command without any pre-configured scope.
 <td>
 
 Denies the full_name command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`fs-pro:allow-icon`
+
+</td>
+<td>
+
+Enables the icon command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`fs-pro:deny-icon`
+
+</td>
+<td>
+
+Denies the icon command without any pre-configured scope.
 
 </td>
 </tr>

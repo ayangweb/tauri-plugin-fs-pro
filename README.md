@@ -6,7 +6,7 @@
 
 The `stat` method of `@tauri-apps/plugin-fs` supports only files when getting size, while the `metadata` method of `tauri-plugin-fs-pro` supports both files and directories when getting size. And some additional [methods](#methods) are provided. More methods will be expanded in the future.
 
-https://github.com/user-attachments/assets/90207b4e-34d2-45ea-acda-c3bfc6ca7caf
+https://github.com/user-attachments/assets/33dff210-9962-4d73-9648-5227d8fd9519
 
 ## Install
 
@@ -50,8 +50,8 @@ Afterwards all the plugin's APIs are available through the JavaScript guest bind
 ```ts
 import { isExist } from "tauri-plugin-fs-pro-api";
 
-const yes = await isExist("/Users/xxx/EcoPaste.txt");
-console.log(yes); // true
+const exists = await isExist("/Users/xxx/EcoPaste.txt");
+console.log(exists); // true
 ```
 
 ## Methods
@@ -65,6 +65,7 @@ console.log(yes); // true
 | `name`       | Get the file or directory name of the path.                                               |
 | `fullName`   | Get the file or directory name of the path, including the extension name if it is a file. |
 | `extname`    | Get the extension name of the file.                                                       |
+| `icon`       | Get the system icon of the path.                                                          |
 | `metadata`   | Get the metadata of the path.                                                             |
 | `open`       | Open the path in file explorer or the default application.                                |
 | `compress`   | Compress the source path into a tar.gz file to the destination path.                      |
@@ -88,3 +89,15 @@ pnpm install
 
 pnpm tauri dev
 ```
+
+## Thanks
+
+- Use [file_icon_provider](https://github.com/IohannRabeson/file_icon_provider) and [image](https://github.com/image-rs/image) to get the system icon for a path.
+
+- Use [open](https://github.com/Byron/open-rs) to open the path in default application.
+
+- Use [showfile](https://github.com/jf2048/showfile) to open the path in file explorer.
+
+- Use [flate2](https://github.com/rust-lang/flate2-rs) and [tar](https://github.com/alexcrichton/tar-rs) to compress and decompress tar.gz.
+
+- Use [fs_extra](https://github.com/webdesus/fs_extra) to implement the move path.
