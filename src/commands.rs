@@ -531,7 +531,7 @@ pub async fn transfer(
         overwrite: true,
         skip_exist: false,
         buffer_size: 64000,
-        copy_inside: false,
+        copy_inside: true,
         content_only: false,
         depth: 0,
     };
