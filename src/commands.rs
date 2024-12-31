@@ -525,7 +525,7 @@ pub async fn transfer(
         }
     }
 
-    println!("from_items: {}", from_items.len());
+    println!("from_items: {:?}", from_items);
 
     let options = CopyOptions {
         overwrite: true,
