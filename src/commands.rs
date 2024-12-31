@@ -485,6 +485,9 @@ pub async fn transfer(
     dst_path: PathBuf,
     options: Option<TransferOptions>,
 ) -> Result<(), String> {
+    println!("src_path: {}", src_path.display());
+    println!("dst_path: {}", dst_path.display());
+
     let options = options.unwrap_or(TransferOptions {
         includes: Some(vec![]),
         excludes: Some(vec![]),
@@ -493,6 +496,8 @@ pub async fn transfer(
     let excludes = options.excludes.unwrap_or(vec![]);
 
     create_dir_all(dst_path.clone()).map_err(|err| err.to_string())?;
+
+    println!("创建成功");
 
     let mut config = HashSet::new();
     config.insert(DirEntryAttr::Path);
@@ -520,6 +525,8 @@ pub async fn transfer(
         }
     }
 
+    println!("from_items: {}", from_items.len());
+
     let options = CopyOptions {
         overwrite: true,
         skip_exist: false,
@@ -530,6 +537,8 @@ pub async fn transfer(
     };
 
     move_items(&from_items, &dst_path, &options).map_err(|err| err.to_string())?;
+
+    println!("移动成功");
 
     Ok(())
 }
