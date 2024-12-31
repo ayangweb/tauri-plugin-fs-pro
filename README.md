@@ -83,11 +83,7 @@ pnpm install
 
 pnpm build
 
-cd examples/tauri-app
-
-pnpm install
-
-pnpm tauri dev
+pnpm dev
 ```
 
 ## Thanks

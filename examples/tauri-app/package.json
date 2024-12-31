@@ -1,5 +1,5 @@
 {
-  "name": "tauri-app",
+  "name": "tauri-plugin-fs-pro-example",
   "private": true,
   "version": "0.1.0",
   "type": "module",

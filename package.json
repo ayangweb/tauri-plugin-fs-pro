@@ -30,6 +30,7 @@
     "README.md"
   ],
   "scripts": {
+    "dev": "pnpm -F tauri-plugin-fs-pro-example tauri dev",
     "build": "rollup -c",
     "prepublishOnly": "pnpm build",
     "pretest": "pnpm build",
