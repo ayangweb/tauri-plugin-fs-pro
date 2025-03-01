@@ -4,18 +4,18 @@ use fs_extra::{
     dir::{get_size, ls, CopyOptions, DirEntryAttr, DirEntryValue},
     move_items,
 };
-use image::{DynamicImage, ImageFormat, RgbaImage};
+use image::{DynamicImage, RgbaImage};
 use serde::Serialize;
 use showfile::show_path_in_file_manager;
 use std::{
     collections::HashSet,
     fs::{self, create_dir_all, read_dir, File},
-    io::{self, Cursor},
+    io::{self},
     path::PathBuf,
     time::{SystemTime, UNIX_EPOCH},
 };
 use tar::Archive;
-use tauri::command;
+use tauri::{command, AppHandle, Manager, Runtime};
 
 #[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -219,6 +219,30 @@ pub async fn extname(path: PathBuf) -> String {
         .unwrap_or_default()
 }
 
+async fn get_icon_name(path: PathBuf) -> Result<String, String> {
+    let is_dir = is_dir(path.clone()).await;
+    let name = name(path.clone()).await;
+    let extname = extname(path.clone()).await;
+    let full_name = full_name(path.clone()).await;
+
+    let is_mac_app = cfg!(target_os = "macos") && extname.eq(&"app");
+    let is_win_app = cfg!(target_os = "windows") && extname.eq(&"exe");
+
+    if is_mac_app || is_win_app {
+        return Ok(full_name);
+    }
+
+    if is_dir {
+        return Ok("__TAURI_PLUGIN_FS_PRO_DIRECTORY__".to_string());
+    }
+
+    if extname.is_empty() {
+        return Ok(name);
+    }
+
+    return Ok(extname);
+}
+
 /// Get the system icon for the path.
 ///
 /// # Arguments
@@ -226,7 +250,7 @@ pub async fn extname(path: PathBuf) -> String {
 /// - `size`: Specify the size of the icon, defaults to `32`.
 ///
 /// # Returns
-/// - `Ok(Vec<u8>)`: A byte vector containing the PNG image data on success.
+/// - `Ok(PathBuf)`: Path to store the image.
 /// - `Err(String)`: An error message string on failure.
 ///
 /// # Example
@@ -234,26 +258,43 @@ pub async fn extname(path: PathBuf) -> String {
 /// use tauri_plugin_fs_pro::icon;
 ///
 /// let path = PathBuf::from("/path/to/file.png");
-/// let bytes = icon(path, None).await.unwrap();
-/// println!("{:?}", bytes);
+/// let save_path = icon(path, None).await.unwrap();
+/// println!("{:?}", save_path);
 /// ```
 #[command]
-pub async fn icon(path: PathBuf, size: Option<u16>) -> Result<Vec<u8>, String> {
+pub async fn icon<R: Runtime>(
+    app_handle: AppHandle<R>,
+    path: PathBuf,
+    size: Option<u16>,
+) -> Result<PathBuf, String> {
     let size = size.unwrap_or(32);
 
-    let icon = get_file_icon(path, size).map_err(|err| err.to_string())?;
+    let icon = get_file_icon(path.clone(), size).map_err(|err| err.to_string())?;
 
     let image = RgbaImage::from_raw(icon.width, icon.height, icon.pixels)
         .map(DynamicImage::ImageRgba8)
-        .ok_or_else(|| "Failed to create RGBA image".to_string())?;
+        .ok_or_else(|| "Failed to convert Icon to Image".to_string())?;
 
-    let mut bytes = Cursor::new(Vec::new());
+    let save_dir = app_handle
+        .path()
+        .app_data_dir()
+        .map_err(|err| err.to_string())?
+        .join("tauri-plugin-fs-pro")
+        .join("icons");
 
-    image
-        .write_to(&mut bytes, ImageFormat::Png)
-        .map_err(|err| err.to_string())?;
+    create_dir_all(&save_dir).map_err(|err| err.to_string())?;
 
-    Ok(bytes.into_inner())
+    let icon_name = get_icon_name(path).await?;
+
+    let save_path = save_dir.join(format!("{}.png", icon_name));
+
+    if save_path.exists() {
+        return Ok(save_path);
+    }
+
+    image.save(&save_path).map_err(|err| err.to_string())?;
+
+    Ok(save_path)
 }
 
 // Converting system time to unix milliseconds.

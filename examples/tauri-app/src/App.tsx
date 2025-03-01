@@ -14,6 +14,7 @@ import {
 import { useReactive } from "ahooks";
 import { open as openDialog } from "@tauri-apps/plugin-dialog";
 import { filesize } from "filesize";
+import { convertFileSrc } from "@tauri-apps/api/core";
 
 const App = () => {
   const state = useReactive({
@@ -33,13 +34,9 @@ const App = () => {
 
     if (!path) return;
 
-    const bytes = await icon(path, 512);
-    const blob = new Blob([bytes], { type: "image/png" });
-    const url = URL.createObjectURL(blob);
-
     Object.assign(state, {
       path,
-      icon: url,
+      icon: convertFileSrc(await icon(path, 512)),
       isExist: await isExist(path),
       isDir: await isDir(path),
       isFile: await isFile(path),

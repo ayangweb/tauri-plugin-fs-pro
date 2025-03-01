@@ -97,3 +97,7 @@ pnpm dev
 - Use [flate2](https://github.com/rust-lang/flate2-rs) and [tar](https://github.com/alexcrichton/tar-rs) to compress and decompress tar.gz.
 
 - Use [fs_extra](https://github.com/webdesus/fs_extra) to implement the move path.
+
+## Who's Use It
+
+- [EcoPaste](https://github.com/EcoPasteHub/EcoPaste) - Open source cross-platform clipboard management tool.

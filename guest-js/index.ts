@@ -116,7 +116,9 @@ export const COMMAND = {
 
 /**
  * Whether the path exists.
+ *
  * @param path Specify the path.
+ *
  * @example
  * import { isExist } from "tauri-plugin-fs-pro-api"
  *
@@ -131,7 +133,9 @@ export const isExist = (path: string) => {
 
 /**
  * Whether the path is a directory.
+ *
  * @param path Specify the path.
+ *
  * @example
  * import { isDir } from "tauri-plugin-fs-pro-api"
  *
@@ -146,7 +150,9 @@ export const isDir = (path: string) => {
 
 /**
  * Whether the path is a file.
+ *
  * @param path Specify the path.
+ *
  * @example
  * import { isFile } from "tauri-plugin-fs-pro-api"
  *
@@ -161,7 +167,9 @@ export const isFile = (path: string) => {
 
 /**
  * Get the size of the path in bytes, or 0 if it does not exist.
+ *
  * @param path Specify the path.
+ *
  * @example
  * import { size } from "tauri-plugin-fs-pro-api"
  *
@@ -176,7 +184,9 @@ export const size = (path: string) => {
 
 /**
  * Get the file or directory name of the path.
+ *
  * @param path Specify the path.
+ *
  * @example
  * import { name } from "tauri-plugin-fs-pro-api"
  *
@@ -191,7 +201,9 @@ export const name = (path: string) => {
 
 /**
  * Get the file or directory name of the path, including the extension name if it is a file.
+ *
  * @param path Specify the path.
+ *
  * @example
  * import { fullName } from "tauri-plugin-fs-pro-api"
  *
@@ -206,7 +218,9 @@ export const fullName = (path: string) => {
 
 /**
  * Get the extension name of the file.
+ *
  * @param path Specify the path.
+ *
  * @example
  * import { extname } from "tauri-plugin-fs-pro-api"
  *
@@ -221,37 +235,42 @@ export const extname = (path: string) => {
 
 /**
  * Get the system icon of the path.
+ *
  * @param path Specify the path.
+ *
  * @param size Specify the size of the icon, default is `32`.
+ *
+ * @returns Path to store the image.
+ *
  * @example
  * import { icon } from "tauri-plugin-path-icon-api";
  *
- * const bytes = await icon("/path/to/file.png");
- * const blob = new Blob([bytes], { type: "image/png" });
- * const url = URL.createObjectURL(blob);
- * console.log(url);
+ * const savePath = await icon("/path/to/file.png");
+ * console.log(savePath);
  */
-export const icon = async (path: string, size = 32) => {
-  const bytes = await invoke<Uint8Array>(COMMAND.ICON, {
+export const icon = (path: string, size = 32) => {
+  return invoke<string>(COMMAND.ICON, {
     path,
     size,
   });
-
-  return new Uint8Array(bytes);
 };
 
 /**
  * Get the metadata of the path.
+ *
  * @param path Specify the path.
+ *
  * @param options.omitSize When getting the metadata of a path, if you don't need to calculate the size, you can omit it to save time and return 0 after omitting it,
  * defaults to `false`.
+ *
+ * @returns return {@linkcode Metadata}
+ *
  * @example
  * import { metadata } from "tauri-plugin-fs-pro-api"
  *
  * const { size, isFile } = await metadata("/Users/xxx/EcoPaste.txt", { omitSize: true })
  * console.log(size) // 0
  * console.log(isFile) // true
- * @returns return {@linkcode Metadata}
  */
 export const metadata = (path: string, options?: MetadataOptions) => {
   return invoke<Metadata>(COMMAND.METADATA, {
@@ -262,11 +281,15 @@ export const metadata = (path: string, options?: MetadataOptions) => {
 
 /**
  * Open the path in file explorer or the default application.
+ *
  * @param path Specify the path.
+ *
  * @param options.explorer Whether to open in file explorer,
  * defaults to `false`.
+ *
  * @param options.enterDir If the path is a directory, does it go directly into the directory,
  * defaults to `false`.
+ *
  * @example
  * import { open } from "tauri-plugin-fs-pro-api"
  *
@@ -281,10 +304,15 @@ export const open = (path: string, options?: OpenOptions) => {
 
 /**
  * Compress the source path into a tar.gz file to the destination path.
+ *
  * @param srcPath Specify the source path.
+ *
  * @param dstPath Specify the destination path.
+ *
  * @param options.includes The name of the file or directory to be compressed.
+ *
  * @param options.excludes The name of the file or directory not to be compressed.
+ *
  * @example
  * import { compress } from "tauri-plugin-fs-pro-api"
  *
@@ -304,8 +332,11 @@ export const compress = (
 
 /**
  * Decompress the tar.gz file from the source path to the destination path.
+ *
  * @param srcPath Specify the source path.
+ *
  * @param dstPath Specify the destination path.
+ *
  * @example
  * import { decompress } from "tauri-plugin-fs-pro-api"
  *
@@ -320,10 +351,15 @@ export const decompress = (srcPath: string, dstPath: string) => {
 
 /**
  * Move the source path to the destination path.
+ *
  * @param srcPath Specify the source path.
+ *
  * @param dstPath Specify the destination path.
+ *
  * @param options.includes The name of the file or directory to be moved.
+ *
  * @param options.excludes The name of the file or directory not to be moved.
+ *b
  * @example
  * import { transfer } from "tauri-plugin-fs-pro-api"
  *
