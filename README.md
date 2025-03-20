@@ -8,6 +8,16 @@ The `stat` method of `@tauri-apps/plugin-fs` supports only files when getting si
 
 https://github.com/user-attachments/assets/33dff210-9962-4d73-9648-5227d8fd9519
 
+## Platform Support
+
+| Platform | Supported |
+| -------- | --------- |
+| Windows  | ✅        |
+| macOS    | ✅        |
+| Linux    | ✅        |
+| Android  | ❌        |
+| iOS      | ❌        |
+
 ## Install
 
 ```shell
@@ -83,7 +93,11 @@ pnpm install
 
 pnpm build
 
-pnpm dev
+cd examples/tauri-app
+
+pnpm install
+
+pnpm tauri dev
 ```
 
 ## Thanks
