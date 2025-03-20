@@ -30,20 +30,19 @@
     "README.md"
   ],
   "scripts": {
-    "dev": "pnpm -F tauri-plugin-fs-pro-example tauri dev",
     "build": "rollup -c",
     "prepublishOnly": "pnpm build",
     "pretest": "pnpm build",
     "release": "release-it"
   },
   "dependencies": {
-    "@tauri-apps/api": "^2.1.1"
+    "@tauri-apps/api": "^2.3.0"
   },
   "devDependencies": {
     "@rollup/plugin-typescript": "^11.1.6",
-    "release-it": "^17.10.0",
-    "rollup": "^4.28.1",
+    "release-it": "^17.11.0",
+    "rollup": "^4.36.0",
     "tslib": "^2.8.1",
-    "typescript": "^5.7.2"
+    "typescript": "^5.8.2"
   }
 }
