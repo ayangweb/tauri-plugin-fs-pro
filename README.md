@@ -66,21 +66,21 @@ console.log(exists); // true
 
 ## Methods
 
-| Method       | Description                                                                               |
-| ------------ | ----------------------------------------------------------------------------------------- |
-| `isExist`    | Whether the path exists.                                                                  |
-| `isDir`      | Whether the path is a directory.                                                          |
-| `isFile`     | Whether the path is a file.                                                               |
-| `size`       | Get the size of the path in bytes, or 0 if it does not exist.                             |
-| `name`       | Get the file or directory name of the path.                                               |
-| `fullName`   | Get the file or directory name of the path, including the extension name if it is a file. |
-| `extname`    | Get the extension name of the file.                                                       |
-| `icon`       | Get the system icon of the path.                                                          |
-| `metadata`   | Get the metadata of the path.                                                             |
-| `open`       | Open the path in file explorer or the default application.                                |
-| `compress`   | Compress the source path into a tar.gz file to the destination path.                      |
-| `decompress` | Decompress the tar.gz file from the source path to the destination path.                  |
-| `transfer`   | Move the source path to the destination path.                                             |
+| Method       | Description                                                              |
+| ------------ | ------------------------------------------------------------------------ |
+| `isExist`    | Check if a path exists.                                                  |
+| `isFile`     | Check if a path is a file.                                               |
+| `isDir`      | Check if a path is a directory.                                          |
+| `size`       | Get the size of the path, or 0 if it does not exist.                     |
+| `name`       | Get the name of the path.                                                |
+| `extname`    | Get the extension name of the path.                                      |
+| `fullName`   | Get the full name of a file or directory including extension.            |
+| `parent`     | Get the parent name of the path.                                         |
+| `icon`       | Get the icon of the path.                                                |
+| `metadata`   | Get the metadata of the path.                                            |
+| `compress`   | Compress the source path into a tar.gz file to the destination path.     |
+| `decompress` | Decompress the tar.gz file from the source path to the destination path. |
+| `transfer`   | Move the source path to the destination path.                            |
 
 ## Example
 
@@ -103,10 +103,6 @@ pnpm tauri dev
 ## Thanks
 
 - Use [file_icon_provider](https://github.com/IohannRabeson/file_icon_provider) and [image](https://github.com/image-rs/image) to get the system icon for a path.
-
-- Use [open](https://github.com/Byron/open-rs) to open the path in default application.
-
-- Use [showfile](https://github.com/jf2048/showfile) to open the path in file explorer.
 
 - Use [flate2](https://github.com/rust-lang/flate2-rs) and [tar](https://github.com/alexcrichton/tar-rs) to compress and decompress tar.gz.
 

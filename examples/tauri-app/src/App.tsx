@@ -9,7 +9,8 @@ import {
   extname,
   icon,
   metadata,
-  open,
+  parentName,
+  Metadata,
 } from "tauri-plugin-fs-pro-api";
 import { useReactive } from "ahooks";
 import { open as openDialog } from "@tauri-apps/plugin-dialog";
@@ -17,15 +18,7 @@ import { filesize } from "filesize";
 import { convertFileSrc } from "@tauri-apps/api/core";
 
 const App = () => {
-  const state = useReactive({
-    path: "",
-    isExist: false,
-    isDir: false,
-    isFile: false,
-    name: "",
-    extname: "",
-    metadata: "",
-  });
+  const state = useReactive<Partial<Metadata & { icon: string }>>({});
 
   const handleSelect = async (directory = false) => {
     const path = await openDialog({
@@ -42,8 +35,9 @@ const App = () => {
       isFile: await isFile(path),
       size: filesize(await size(path), { standard: "jedec" }),
       name: await name(path),
-      fullName: await fullName(path),
       extname: await extname(path),
+      fullName: await fullName(path),
+      parentName: await parentName(path),
       metadata: await metadata(path),
     });
   };
@@ -75,40 +69,6 @@ const App = () => {
                 </List.Item>
               );
             })}
-
-            <List.Item>
-              <span>open</span>
-              <Flex gap="middle">
-                <Button
-                  onClick={() => {
-                    open(state.path);
-                  }}
-                >
-                  Default Application
-                </Button>
-                <Button
-                  onClick={() => {
-                    open(state.path, {
-                      explorer: true,
-                    });
-                  }}
-                >
-                  File Explorer
-                </Button>
-                {state.isDir && (
-                  <Button
-                    onClick={() => {
-                      open(state.path, {
-                        explorer: true,
-                        enterDir: true,
-                      });
-                    }}
-                  >
-                    Enter Directory
-                  </Button>
-                )}
-              </Flex>
-            </List.Item>
           </List>
         </>
       )}

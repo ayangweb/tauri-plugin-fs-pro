@@ -395,14 +395,14 @@
           "const": "deny-name"
         },
         {
-          "description": "Enables the open command without any pre-configured scope.",
+          "description": "Enables the parent_name command without any pre-configured scope.",
           "type": "string",
-          "const": "allow-open"
+          "const": "allow-parent-name"
         },
         {
-          "description": "Denies the open command without any pre-configured scope.",
+          "description": "Denies the parent_name command without any pre-configured scope.",
           "type": "string",
-          "const": "deny-open"
+          "const": "deny-parent-name"
         },
         {
           "description": "Enables the size command without any pre-configured scope.",
