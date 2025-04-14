@@ -17,9 +17,9 @@ pub fn init<R: Runtime>() -> TauriPlugin<R> {
             commands::name,
             commands::full_name,
             commands::extname,
+            commands::parent_name,
             commands::icon,
             commands::metadata,
-            commands::open,
             commands::compress,
             commands::decompress,
             commands::transfer

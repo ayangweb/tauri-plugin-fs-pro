@@ -7,11 +7,11 @@ Default permissions for the plugin
 - `allow-is-file`
 - `allow-size`
 - `allow-name`
-- `allow-full-name`
 - `allow-extname`
+- `allow-full-name`
+- `allow-parent-name`
 - `allow-icon`
 - `allow-metadata`
-- `allow-open`
 - `allow-compress`
 - `allow-decompress`
 - `allow-transfer`
@@ -288,12 +288,12 @@ Denies the name command without any pre-configured scope.
 <tr>
 <td>
 
-`fs-pro:allow-open`
+`fs-pro:allow-parent-name`
 
 </td>
 <td>
 
-Enables the open command without any pre-configured scope.
+Enables the parent_name command without any pre-configured scope.
 
 </td>
 </tr>
@@ -301,12 +301,12 @@ Enables the open command without any pre-configured scope.
 <tr>
 <td>
 
-`fs-pro:deny-open`
+`fs-pro:deny-parent-name`
 
 </td>
 <td>
 
-Denies the open command without any pre-configured scope.
+Denies the parent_name command without any pre-configured scope.
 
 </td>
 </tr>

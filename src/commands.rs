@@ -6,7 +6,6 @@ use fs_extra::{
 };
 use image::{DynamicImage, RgbaImage};
 use serde::Serialize;
-use showfile::show_path_in_file_manager;
 use std::{
     collections::HashSet,
     fs::{self, create_dir_all, read_dir, File},
@@ -24,16 +23,18 @@ pub struct Metadata {
     pub size: u64,
     // The file or directory name of the path.
     pub name: String,
-    // The file or directory name of the path, including the extension name if it is a file.
-    pub full_name: String,
     // The extension name of the path.
     pub extname: String,
-    // Whether the path is a directory.
-    pub is_dir: bool,
-    // Whether the path is a file.
-    pub is_file: bool,
+    // The full name of the path including extension.
+    pub full_name: String,
+    // The parent directory name of the path.
+    pub parent_name: String,
     // Whether the path exists.
     pub is_exist: bool,
+    // Whether the path is a file.
+    pub is_file: bool,
+    // Whether the path is a directory.
+    pub is_dir: bool,
     // Whether the path is a symbolic link.
     pub is_symlink: bool,
     // Whether the path is an absolute path.
@@ -51,17 +52,8 @@ pub struct Metadata {
 #[derive(Debug, serde::Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct MetadataOptions {
-    // When getting the metadata of a path, if you don't need to calculate the size, you can omit it to save time and return 0 after omitting it.
+    // When getting the metadata of a path, if you don't need to calculate the size, you can omit it to save time and return 0 after omitting it, defaults to `false`.
     pub omit_size: Option<bool>,
-}
-
-#[derive(Debug, serde::Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct OpenOptions {
-    // Whether to open in file explorer.
-    pub explorer: Option<bool>,
-    // If the path is a directory, does it go directly into the directory.
-    pub enter_dir: Option<bool>,
 }
 
 #[derive(Debug, serde::Deserialize)]
@@ -80,17 +72,17 @@ pub struct TransferOptions {
     pub excludes: Option<Vec<String>>,
 }
 
-/// Whether the path exists.
+/// Check if a path exists.
 ///
 /// # Arguments
-///
 /// - `path`: Specify the path.
 ///
 /// # Example
 /// ```
+/// use std::path::PathBuf;
 /// use tauri_plugin_fs_pro::is_exist;
 ///
-/// let path = PathBuf::from("/path/to/file.text");
+/// let path = PathBuf::from("/path/to/file.txt");
 /// let exists = is_exist(path).await;
 /// println!("{}", exists); // true
 /// ```
@@ -99,36 +91,17 @@ pub async fn is_exist(path: PathBuf) -> bool {
     path.exists()
 }
 
-/// Whether the path is a directory.
+/// Check if a path is a file.
 ///
 /// # Arguments
-///
 /// - `path`: Specify the path.
 ///
 /// # Example
 /// ```
-/// use tauri_plugin_fs_pro::is_dir;
-///
-/// let path = PathBuf::from("/path/to/dir");
-/// let is_dir = is_dir(path).await;
-/// println!("{}", is_dir); // true
-/// ```
-#[command]
-pub async fn is_dir(path: PathBuf) -> bool {
-    path.is_dir()
-}
-
-/// Whether the path is a file.
-///
-/// # Arguments
-///
-/// - `path`: Specify the path.
-///
-/// # Example
-/// ```
+/// use std::path::PathBuf;
 /// use tauri_plugin_fs_pro::is_file;
 ///
-/// let path = PathBuf::from("/path/to/file.text");
+/// let path = PathBuf::from("/path/to/file.txt");
 /// let is_file = is_file(path).await;
 /// println!("{}", is_file); // true
 /// ```
@@ -137,17 +110,36 @@ pub async fn is_file(path: PathBuf) -> bool {
     path.is_file()
 }
 
-/// Get the size of the path, or 0 if it does not exist.
+/// Check if a path is a directory.
 ///
 /// # Arguments
-///
 /// - `path`: Specify the path.
 ///
 /// # Example
 /// ```
+/// use std::path::PathBuf;
+/// use tauri_plugin_fs_pro::is_dir;
+///
+/// let path = PathBuf::from("/path/to/directory");
+/// let is_dir = is_dir(path).await;
+/// println!("{}", is_dir); // true
+/// ```
+#[command]
+pub async fn is_dir(path: PathBuf) -> bool {
+    path.is_dir()
+}
+
+/// Get the size of the path, or 0 if it does not exist.
+///
+/// # Arguments
+/// - `path`: Specify the path.
+///
+/// # Example
+/// ```
+/// use std::path::PathBuf;
 /// use tauri_plugin_fs_pro::size;
 ///
-/// let path = PathBuf::from("/path/to/file.text");
+/// let path = PathBuf::from("/path/to/file.txt");
 /// let size = size(path).await;
 /// println!("{}", size); // 1024
 /// ```
@@ -156,40 +148,69 @@ pub async fn size(path: PathBuf) -> u64 {
     get_size(path).unwrap_or(0)
 }
 
-/// Get the file or directory name of the path.
+/// Get the name of the path.
 ///
 /// # Arguments
-///
 /// - `path`: Specify the path.
 ///
 /// # Example
 /// ```
+/// use std::path::PathBuf;
 /// use tauri_plugin_fs_pro::name;
 ///
-/// let path = PathBuf::from("/path/to/file.text");
+/// let path = PathBuf::from("/path/to/file.txt");
 /// let name = name(path).await;
-/// println!("{}", name); // file
+/// println!("{}", name); // "file"
 /// ```
 #[command]
 pub async fn name(path: PathBuf) -> String {
+    if path.is_dir() {
+        return full_name(path).await;
+    }
+
     path.file_stem()
         .map(|name| name.to_string_lossy().to_string())
         .unwrap_or_default()
 }
 
-/// Get the file or directory name of the path, including the extension name if it is a file.
+/// Get the extension name of a path.
 ///
 /// # Arguments
-///
 /// - `path`: Specify the path.
 ///
 /// # Example
 /// ```
+/// use std::path::PathBuf;
+/// use tauri_plugin_fs_pro::extname;
+///
+/// let path = PathBuf::from("/path/to/file.txt");
+/// let ext = extname(path).await;
+/// println!("{}", ext); // "txt"
+/// ```
+#[command]
+pub async fn extname(path: PathBuf) -> String {
+    if path.is_dir() {
+        return String::default();
+    }
+
+    path.extension()
+        .map(|extname| extname.to_string_lossy().to_string())
+        .unwrap_or_default()
+}
+
+/// Get the full name of a file or directory including extension.
+///
+/// # Arguments
+/// - `path`: Specify the path.
+///
+/// # Example
+/// ```
+/// use std::path::PathBuf;
 /// use tauri_plugin_fs_pro::full_name;
 ///
-/// let path = PathBuf::from("/path/to/file.text");
-/// let name = full_name(path).await;
-/// println!("{}", name); // file.text
+/// let path = PathBuf::from("/path/to/file.txt");
+/// let full_name = full_name(path).await;
+/// println!("{}", full_name); // "file.txt"
 /// ```
 #[command]
 pub async fn full_name(path: PathBuf) -> String {
@@ -198,25 +219,32 @@ pub async fn full_name(path: PathBuf) -> String {
         .unwrap_or_default()
 }
 
-/// Get the extension name of the path.
+/// Get the parent directory name of a path.
 ///
 /// # Arguments
-///
 /// - `path`: Specify the path.
+/// - `level`: Specify the level of the parent directory, defaults to `1`.
 ///
 /// # Example
 /// ```
-/// use tauri_plugin_fs_pro::extname;
+/// use std::path::PathBuf;
+/// use tauri_plugin_fs_pro::parent_name;
 ///
-/// let path = PathBuf::from("/path/to/file.text");
-/// let name = extname(path).await;
-/// println!("{}", name); // text
+/// let path = PathBuf::from("/path/to/file.txt");
+/// let parent = parent_name(path, None).await;
+/// println!("{}", parent.unwrap()); // "to"
 /// ```
 #[command]
-pub async fn extname(path: PathBuf) -> String {
-    path.extension()
-        .map(|extname| extname.to_string_lossy().to_string())
-        .unwrap_or_default()
+pub async fn parent_name(path: PathBuf, level: Option<u8>) -> Result<String, String> {
+    let mut current = path;
+    for _ in 0..level.unwrap_or(1) {
+        if let Some(parent) = current.parent() {
+            current = parent.to_path_buf();
+        } else {
+            return Ok(String::default());
+        }
+    }
+    Ok(full_name(current).await)
 }
 
 async fn get_icon_name(path: PathBuf) -> Result<String, String> {
@@ -243,23 +271,20 @@ async fn get_icon_name(path: PathBuf) -> Result<String, String> {
     return Ok(extname);
 }
 
-/// Get the system icon for the path.
+/// Get the icon of a path.
 ///
 /// # Arguments
 /// - `path`: Specify the path.
 /// - `size`: Specify the size of the icon, defaults to `32`.
 ///
-/// # Returns
-/// - `Ok(PathBuf)`: Path to store the image.
-/// - `Err(String)`: An error message string on failure.
-///
 /// # Example
 /// ```
+/// use std::path::PathBuf;
 /// use tauri_plugin_fs_pro::icon;
 ///
-/// let path = PathBuf::from("/path/to/file.png");
-/// let save_path = icon(path, None).await.unwrap();
-/// println!("{:?}", save_path);
+/// let path = PathBuf::from("/path/to/file.txt");
+/// let icon_path = icon(app.handle(), path, None).await?;
+/// println!("{}", icon_path);
 /// ```
 #[command]
 pub async fn icon<R: Runtime>(
@@ -275,6 +300,7 @@ pub async fn icon<R: Runtime>(
         .map(DynamicImage::ImageRgba8)
         .ok_or_else(|| "Failed to convert Icon to Image".to_string())?;
 
+    // TODO: 支持自定义存储路路径
     let save_dir = app_handle
         .path()
         .app_data_dir()
@@ -297,7 +323,6 @@ pub async fn icon<R: Runtime>(
     Ok(save_path)
 }
 
-// Converting system time to unix milliseconds.
 fn system_time_to_unix_millis(time: io::Result<SystemTime>) -> u128 {
     match time {
         Ok(system_time) => system_time
@@ -311,9 +336,8 @@ fn system_time_to_unix_millis(time: io::Result<SystemTime>) -> u128 {
 /// Get the metadata of the path.
 ///
 /// # Arguments
-///
-/// * `path`: Specify the path.
-/// * `options.omitSize`: When getting the metadata of a path, if you don't need to calculate the size, you can omit it to save time and return 0 after omitting it, defaults to `false`.
+/// - `path`: Specify the path.
+/// - `options.omitSize`: When getting the metadata of a path, if you don't need to calculate the size, you can omit it to save time and return 0 after omitting it, defaults to `false`.
 ///
 /// # Returns
 /// - `Ok(Metadata)`: The metadata of the path.
@@ -321,26 +345,28 @@ fn system_time_to_unix_millis(time: io::Result<SystemTime>) -> u128 {
 ///
 /// # Example
 /// ```
+/// use std::path::PathBuf;
 /// use tauri_plugin_fs_pro::metadata;
 ///
 /// let path = PathBuf::from("/path/to/file.txt");
-/// let metadata = metadata(path, None).await.unwrap();
+/// let metadata = metadata(path, None).await?;
 /// println!("{:?}", metadata);
 /// ```
 #[command]
 pub async fn metadata(path: PathBuf, options: Option<MetadataOptions>) -> Result<Metadata, String> {
-    let options = options.unwrap_or(MetadataOptions {
-        omit_size: Some(false),
-    });
-    let omit_size = options.omit_size.unwrap_or(false);
+    let omit_size = options
+        .map(|options| options.omit_size.unwrap_or(false))
+        .unwrap_or(false);
 
-    let size = match omit_size {
-        true => 0,
-        false => size(path.clone()).await,
+    let size = if omit_size {
+        0
+    } else {
+        size(path.clone()).await
     };
     let name = name(path.clone()).await;
-    let full_name = full_name(path.clone()).await;
     let extname = extname(path.clone()).await;
+    let full_name = full_name(path.clone()).await;
+    let parent_name = parent_name(path.clone(), Some(1)).await?;
 
     let is_dir = path.is_dir();
     let is_file = path.is_file();
@@ -357,8 +383,9 @@ pub async fn metadata(path: PathBuf, options: Option<MetadataOptions>) -> Result
     Ok(Metadata {
         size,
         name,
-        full_name,
         extname,
+        full_name,
+        parent_name,
         is_dir,
         is_file,
         is_exist,
@@ -371,40 +398,6 @@ pub async fn metadata(path: PathBuf, options: Option<MetadataOptions>) -> Result
     })
 }
 
-/// Open the path in file explorer or the default application.
-///
-/// # Arguments
-/// - `path`: Specify the path.
-/// - `options.explorer`: Whether to open in file explorer, defaults to `false`.
-/// - `options.enterDir`: If the path is a directory, does it go directly into the directory, defaults to `false`.
-///
-/// # Example
-/// ```
-/// use tauri_plugin_fs_pro::open;
-///
-/// let path = PathBuf::from("/path/to/file.txt");
-/// open(path, None).await.unwrap();
-/// ```
-#[command]
-pub async fn open(path: PathBuf, options: Option<OpenOptions>) -> Result<(), String> {
-    let options = options.unwrap_or(OpenOptions {
-        explorer: Some(false),
-        enter_dir: Some(false),
-    });
-    let explorer = options.explorer.unwrap_or(false);
-    let enter_dir = options.enter_dir.unwrap_or(false);
-
-    if explorer && !(path.is_dir() && enter_dir) {
-        // Open the path in file explorer.
-        show_path_in_file_manager(path);
-    } else {
-        // Open the path in the default application.
-        open::that(path).map_err(|err| err.to_string())?;
-    }
-
-    Ok(())
-}
-
 /// Compress the source path into a tar.gz file to the destination path.
 ///
 /// # Arguments
@@ -415,11 +408,12 @@ pub async fn open(path: PathBuf, options: Option<OpenOptions>) -> Result<(), Str
 ///
 /// # Example
 /// ```
+/// use std::path::PathBuf;
 /// use tauri_plugin_fs_pro::compress;
 ///
-/// let src_path = PathBuf::from("/path/src/EcoPaste");
-/// let dst_path = PathBuf::from("/path/dst/EcoPaste.tar.gz");
-/// compress(src_path, dst_path, None).await.unwrap();
+/// let src_path = PathBuf::from("/path/to/source");
+/// let dst_path = PathBuf::from("/path/to/destination.tar.gz");
+/// compress(src_path, dst_path, None).await?;
 /// ```
 #[command]
 pub async fn compress(
@@ -475,11 +469,12 @@ pub async fn compress(
 ///
 /// # Example
 /// ```
+/// use std::path::PathBuf;
 /// use tauri_plugin_fs_pro::decompress;
 ///
-/// let src_path = PathBuf::from("/path/src/EcoPaste.tar.gz");
-/// let dst_path = PathBuf::from("/path/dst/EcoPaste");
-/// decompress(src_path, dst_path).await.unwrap();
+/// let src_path = PathBuf::from("/path/to/source.tar.gz");
+/// let dst_path = PathBuf::from("/path/to/destination");
+/// decompress(src_path, dst_path).await?;
 /// ```
 #[command]
 pub async fn decompress(src_path: PathBuf, dst_path: PathBuf) -> Result<(), String> {
@@ -514,11 +509,12 @@ pub async fn decompress(src_path: PathBuf, dst_path: PathBuf) -> Result<(), Stri
 ///
 /// # Example
 /// ```
+/// use std::path::PathBuf;
 /// use tauri_plugin_fs_pro::transfer;
 ///
-/// let src_path = PathBuf::from("/path/src/EcoPaste");
-/// let dst_path = PathBuf::from("/path/dst/EcoPaste");
-/// transfer(src_path, dst_path, None).await.unwrap();
+/// let src_path = PathBuf::from("/path/to/source");
+/// let dst_path = PathBuf::from("/path/to/destination");
+/// transfer(src_path, dst_path, None).await?;
 /// ```
 #[command]
 pub async fn transfer(
