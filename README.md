@@ -75,7 +75,7 @@ console.log(exists); // true
 | `name`       | Get the name of the path.                                                |
 | `extname`    | Get the extension name of the path.                                      |
 | `fullName`   | Get the full name of a file or directory including extension.            |
-| `parent`     | Get the parent name of the path.                                         |
+| `parentName` | Get the parent name of the path.                                         |
 | `icon`       | Get the icon of the path.                                                |
 | `metadata`   | Get the metadata of the path.                                            |
 | `compress`   | Compress the source path into a tar.gz file to the destination path.     |
