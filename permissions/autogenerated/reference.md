@@ -7,8 +7,8 @@ Default permissions for the plugin
 - `allow-is-file`
 - `allow-size`
 - `allow-name`
-- `allow-full-name`
 - `allow-extname`
+- `allow-full-name`
 - `allow-parent-name`
 - `allow-icon`
 - `allow-metadata`

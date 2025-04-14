@@ -283,8 +283,8 @@ async fn get_icon_name(path: PathBuf) -> Result<String, String> {
 /// use tauri_plugin_fs_pro::icon;
 ///
 /// let path = PathBuf::from("/path/to/file.txt");
-/// let icon_path = icon(app.handle(), path, None).await;
-/// println!("{}", icon_path.unwrap()); // "/path/to/icon.png"
+/// let icon_path = icon(app.handle(), path, None).await?;
+/// println!("{}", icon_path);
 /// ```
 #[command]
 pub async fn icon<R: Runtime>(
@@ -411,8 +411,8 @@ pub async fn metadata(path: PathBuf, options: Option<MetadataOptions>) -> Result
 /// use std::path::PathBuf;
 /// use tauri_plugin_fs_pro::compress;
 ///
-/// let src_path = PathBuf::from("/path/src/source");
-/// let dst_path = PathBuf::from("/path/dst/destination.tar.gz");
+/// let src_path = PathBuf::from("/path/to/source");
+/// let dst_path = PathBuf::from("/path/to/destination.tar.gz");
 /// compress(src_path, dst_path, None).await?;
 /// ```
 #[command]
@@ -473,7 +473,7 @@ pub async fn compress(
 /// use tauri_plugin_fs_pro::decompress;
 ///
 /// let src_path = PathBuf::from("/path/to/source.tar.gz");
-/// let dst_path = PathBuf::from("/path/to/directory");
+/// let dst_path = PathBuf::from("/path/to/destination");
 /// decompress(src_path, dst_path).await?;
 /// ```
 #[command]
