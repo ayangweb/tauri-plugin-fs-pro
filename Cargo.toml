@@ -1,6 +1,6 @@
 [package]
 name = "tauri-plugin-fs-pro"
-version = "2.3.1"
+version = "2.4.0"
 authors = [ "ayangweb" ]
 description = "Extended with additional methods for files and directories."
 repository = "https://github.com/ayangweb/tauri-plugin-fs-pro"
