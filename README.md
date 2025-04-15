@@ -6,7 +6,7 @@
 
 The `stat` method of `@tauri-apps/plugin-fs` supports only files when getting size, while the `metadata` method of `tauri-plugin-fs-pro` supports both files and directories when getting size. And some additional [methods](#methods) are provided. More methods will be expanded in the future.
 
-https://github.com/user-attachments/assets/33dff210-9962-4d73-9648-5227d8fd9519
+https://github.com/user-attachments/assets/f6cbf39d-7ce4-4efb-a348-90b8b3ed8b43
 
 ## Platform Support
 
