@@ -1,5 +1,23 @@
 import { invoke } from "@tauri-apps/api/core";
 
+export interface IconOptions {
+  /**
+   * The size of the icon, defaults to `32`.
+   */
+  size?: number;
+  /**
+   * The path to save the icon, defaults to the default save path.
+   */
+  savePath?: string;
+}
+
+export interface MetadataOptions {
+  /**
+   * When getting the metadata of a path, if you don't need to calculate the size, you can omit it to save time and return 0 after omitting it.
+   */
+  omitSize?: boolean;
+}
+
 export interface Metadata {
   /**
    * The size of the path in bytes.
@@ -59,13 +77,6 @@ export interface Metadata {
   modifiedAt: number;
 }
 
-export interface MetadataOptions {
-  /**
-   * When getting the metadata of a path, if you don't need to calculate the size, you can omit it to save time and return 0 after omitting it.
-   */
-  omitSize?: boolean;
-}
-
 export interface CompressOptions {
   /**
    * The name of the file or directory to be compressed.
@@ -97,6 +108,7 @@ export const COMMAND = {
   EXTNAME: "plugin:fs-pro|extname",
   FULL_NAME: "plugin:fs-pro|full_name",
   PARENT_NAME: "plugin:fs-pro|parent_name",
+  GET_DEFAULT_SAVE_ICON_PATH: "plugin:fs-pro|get_default_save_icon_path",
   ICON: "plugin:fs-pro|icon",
   METADATA: "plugin:fs-pro|metadata",
   COMPRESS: "plugin:fs-pro|compress",
@@ -259,10 +271,26 @@ export const parentName = (path: string, level = 1) => {
 };
 
 /**
+ * Get the default save icon path.
+ *
+ * @example
+ * ```
+ * import { getDefaultSaveIconPath } from "tauri-plugin-fs-pro-api"
+ *
+ * const savePath = await getDefaultSaveIconPath()
+ * console.log(savePath)
+ * ```
+ */
+export const getDefaultSaveIconPath = () => {
+  return invoke<string>(COMMAND.GET_DEFAULT_SAVE_ICON_PATH);
+};
+
+/**
  * Get the icon of the path.
  *
  * @param path Specify the path.
- * @param size Specify the size of the icon, defaults to `32`.
+ * @param options.size Specify the size of the icon, defaults to `32`.
+ * @param options.savePath Specify the path to save the icon, defaults to the default save path.
  *
  * @example
  * ```
@@ -272,10 +300,10 @@ export const parentName = (path: string, level = 1) => {
  * console.log(iconPath)
  * ```
  */
-export const icon = (path: string, size = 32) => {
+export const icon = (path: string, options: IconOptions) => {
   return invoke<string>(COMMAND.ICON, {
     path,
-    size,
+    options,
   });
 };
 

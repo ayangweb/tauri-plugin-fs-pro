@@ -7,6 +7,7 @@ const COMMANDS: &[&str] = &[
     "full_name",
     "extname",
     "parent_name",
+    "get_default_save_icon_path",
     "icon",
     "metadata",
     "compress",

@@ -10,6 +10,7 @@ Default permissions for the plugin
 - `allow-extname`
 - `allow-full-name`
 - `allow-parent-name`
+- `allow-get-default-save-icon-path`
 - `allow-icon`
 - `allow-metadata`
 - `allow-compress`
@@ -125,6 +126,32 @@ Enables the full_name command without any pre-configured scope.
 <td>
 
 Denies the full_name command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`fs-pro:allow-get-default-save-icon-path`
+
+</td>
+<td>
+
+Enables the get_default_save_icon_path command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`fs-pro:deny-get-default-save-icon-path`
+
+</td>
+<td>
+
+Denies the get_default_save_icon_path command without any pre-configured scope.
 
 </td>
 </tr>
