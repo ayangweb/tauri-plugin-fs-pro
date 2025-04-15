@@ -66,21 +66,22 @@ console.log(exists); // true
 
 ## Methods
 
-| Method       | Description                                                              |
-| ------------ | ------------------------------------------------------------------------ |
-| `isExist`    | Check if a path exists.                                                  |
-| `isFile`     | Check if a path is a file.                                               |
-| `isDir`      | Check if a path is a directory.                                          |
-| `size`       | Get the size of the path, or 0 if it does not exist.                     |
-| `name`       | Get the name of the path.                                                |
-| `extname`    | Get the extension name of the path.                                      |
-| `fullName`   | Get the full name of a file or directory including extension.            |
-| `parentName` | Get the parent name of the path.                                         |
-| `icon`       | Get the icon of the path.                                                |
-| `metadata`   | Get the metadata of the path.                                            |
-| `compress`   | Compress the source path into a tar.gz file to the destination path.     |
-| `decompress` | Decompress the tar.gz file from the source path to the destination path. |
-| `transfer`   | Move the source path to the destination path.                            |
+| Method                   | Description                                                              |
+| ------------------------ | ------------------------------------------------------------------------ |
+| `isExist`                | Check if a path exists.                                                  |
+| `isFile`                 | Check if a path is a file.                                               |
+| `isDir`                  | Check if a path is a directory.                                          |
+| `size`                   | Get the size of the path, or 0 if it does not exist.                     |
+| `name`                   | Get the name of the path.                                                |
+| `extname`                | Get the extension name of the path.                                      |
+| `fullName`               | Get the full name of a file or directory including extension.            |
+| `parentName`             | Get the parent name of the path.                                         |
+| `getDefaultSaveIconPath` | Get the default save icon path.                                          |
+| `icon`                   | Get the icon of the path.                                                |
+| `metadata`               | Get the metadata of the path.                                            |
+| `compress`               | Compress the source path into a tar.gz file to the destination path.     |
+| `decompress`             | Decompress the tar.gz file from the source path to the destination path. |
+| `transfer`               | Move the source path to the destination path.                            |
 
 ## Example
 
