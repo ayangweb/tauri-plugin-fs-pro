@@ -317,13 +317,11 @@ pub async fn icon<R: Runtime>(
     path: PathBuf,
     options: Option<IconOptions>,
 ) -> Result<PathBuf, String> {
-    println!("{:?}", options);
     let size = options.as_ref().and_then(|opt| opt.size).unwrap_or(32);
+    let default_save_path = get_default_save_icon_path(app_handle).await?;
     let save_path = options
         .and_then(|opt| opt.save_path)
-        .unwrap_or(get_default_save_icon_path(app_handle).await?);
-
-    println!("{:?}", save_path);
+        .unwrap_or(default_save_path);
 
     let icon = get_file_icon(path.clone(), size).map_err(|err| err.to_string())?;
 
