@@ -16,6 +16,22 @@ use std::{
 use tar::Archive;
 use tauri::{command, AppHandle, Manager, Runtime};
 
+#[derive(Debug, serde::Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct IconOptions {
+    // The size of the icon, defaults to `32`.
+    pub size: Option<u16>,
+    // The path to save the icon, defaults to the default save path.
+    pub save_path: Option<PathBuf>,
+}
+
+#[derive(Debug, serde::Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct MetadataOptions {
+    // When getting the metadata of a path, if you don't need to calculate the size, you can omit it to save time and return 0 after omitting it, defaults to `false`.
+    pub omit_size: Option<bool>,
+}
+
 #[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Metadata {
@@ -47,13 +63,6 @@ pub struct Metadata {
     pub created_at: u128,
     // The modified time of the path in milliseconds.
     pub modified_at: u128,
-}
-
-#[derive(Debug, serde::Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct MetadataOptions {
-    // When getting the metadata of a path, if you don't need to calculate the size, you can omit it to save time and return 0 after omitting it, defaults to `false`.
-    pub omit_size: Option<bool>,
 }
 
 #[derive(Debug, serde::Deserialize)]
@@ -164,10 +173,6 @@ pub async fn size(path: PathBuf) -> u64 {
 /// ```
 #[command]
 pub async fn name(path: PathBuf) -> String {
-    if path.is_dir() {
-        return full_name(path).await;
-    }
-
     path.file_stem()
         .map(|name| name.to_string_lossy().to_string())
         .unwrap_or_default()
@@ -189,10 +194,6 @@ pub async fn name(path: PathBuf) -> String {
 /// ```
 #[command]
 pub async fn extname(path: PathBuf) -> String {
-    if path.is_dir() {
-        return String::default();
-    }
-
     path.extension()
         .map(|extname| extname.to_string_lossy().to_string())
         .unwrap_or_default()
@@ -271,11 +272,35 @@ async fn get_icon_name(path: PathBuf) -> Result<String, String> {
     return Ok(extname);
 }
 
+/// Get the default save icon path.
+///
+/// # Example
+/// ```
+/// use tauri_plugin_fs_pro::get_default_save_icon_path;
+///
+/// let path = get_default_save_icon_path(app.handle()).await?;
+/// println!("{}", path);
+/// ```
+#[command]
+pub async fn get_default_save_icon_path<R: Runtime>(
+    app_handle: AppHandle<R>,
+) -> Result<PathBuf, String> {
+    let save_path = app_handle
+        .path()
+        .app_data_dir()
+        .map_err(|err| err.to_string())?
+        .join("tauri-plugin-fs-pro")
+        .join("icons");
+
+    Ok(save_path)
+}
+
 /// Get the icon of a path.
 ///
 /// # Arguments
 /// - `path`: Specify the path.
-/// - `size`: Specify the size of the icon, defaults to `32`.
+/// - `options.size`: Specify the size of the icon, defaults to `32`.
+/// - `options.savePath`: Specify the path to save the icon, defaults to the default save path.
 ///
 /// # Example
 /// ```
@@ -290,9 +315,15 @@ async fn get_icon_name(path: PathBuf) -> Result<String, String> {
 pub async fn icon<R: Runtime>(
     app_handle: AppHandle<R>,
     path: PathBuf,
-    size: Option<u16>,
+    options: Option<IconOptions>,
 ) -> Result<PathBuf, String> {
-    let size = size.unwrap_or(32);
+    println!("{:?}", options);
+    let size = options.as_ref().and_then(|opt| opt.size).unwrap_or(32);
+    let save_path = options
+        .and_then(|opt| opt.save_path)
+        .unwrap_or(get_default_save_icon_path(app_handle).await?);
+
+    println!("{:?}", save_path);
 
     let icon = get_file_icon(path.clone(), size).map_err(|err| err.to_string())?;
 
@@ -300,19 +331,11 @@ pub async fn icon<R: Runtime>(
         .map(DynamicImage::ImageRgba8)
         .ok_or_else(|| "Failed to convert Icon to Image".to_string())?;
 
-    // TODO: 支持自定义存储路路径
-    let save_dir = app_handle
-        .path()
-        .app_data_dir()
-        .map_err(|err| err.to_string())?
-        .join("tauri-plugin-fs-pro")
-        .join("icons");
-
-    create_dir_all(&save_dir).map_err(|err| err.to_string())?;
+    create_dir_all(&save_path).map_err(|err| err.to_string())?;
 
     let icon_name = get_icon_name(path).await?;
 
-    let save_path = save_dir.join(format!("{}.png", icon_name));
+    let save_path = save_path.join(format!("{}.png", icon_name));
 
     if save_path.exists() {
         return Ok(save_path);
@@ -354,9 +377,7 @@ fn system_time_to_unix_millis(time: io::Result<SystemTime>) -> u128 {
 /// ```
 #[command]
 pub async fn metadata(path: PathBuf, options: Option<MetadataOptions>) -> Result<Metadata, String> {
-    let omit_size = options
-        .map(|options| options.omit_size.unwrap_or(false))
-        .unwrap_or(false);
+    let omit_size = options.and_then(|opt| opt.omit_size).unwrap_or(false);
 
     let size = if omit_size {
         0

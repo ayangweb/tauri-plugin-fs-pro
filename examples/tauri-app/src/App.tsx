@@ -7,6 +7,7 @@ import {
   name,
   fullName,
   extname,
+  getDefaultSaveIconPath,
   icon,
   metadata,
   parentName,
@@ -18,7 +19,7 @@ import { filesize } from "filesize";
 import { convertFileSrc } from "@tauri-apps/api/core";
 
 const App = () => {
-  const state = useReactive<Partial<Metadata & { icon: string }>>({});
+  const state = useReactive<Partial<Metadata & Record<string, any>>>({});
 
   const handleSelect = async (directory = false) => {
     const path = await openDialog({
@@ -29,7 +30,8 @@ const App = () => {
 
     Object.assign(state, {
       path,
-      icon: convertFileSrc(await icon(path, 512)),
+      defaultSaveIconPath: await getDefaultSaveIconPath(),
+      icon: convertFileSrc(await icon(path, { size: 512 })),
       isExist: await isExist(path),
       isDir: await isDir(path),
       isFile: await isFile(path),
