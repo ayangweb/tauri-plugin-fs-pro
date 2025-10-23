@@ -323,21 +323,21 @@ pub async fn icon<R: Runtime>(
         .and_then(|opt| opt.save_path)
         .unwrap_or(default_save_path);
 
-    let icon = get_file_icon(path.clone(), size).map_err(|err| err.to_string())?;
-
-    let image = RgbaImage::from_raw(icon.width, icon.height, icon.pixels)
-        .map(DynamicImage::ImageRgba8)
-        .ok_or_else(|| "Failed to convert Icon to Image".to_string())?;
-
-    create_dir_all(&save_path).map_err(|err| err.to_string())?;
-
-    let icon_name = get_icon_name(path).await?;
+    let icon_name = get_icon_name(path.clone()).await?;
 
     let save_path = save_path.join(format!("{}.png", icon_name));
 
     if save_path.exists() {
         return Ok(save_path);
     }
+
+    let icon = get_file_icon(path, size).map_err(|err| err.to_string())?;
+
+    let image = RgbaImage::from_raw(icon.width, icon.height, icon.pixels)
+        .map(DynamicImage::ImageRgba8)
+        .ok_or_else(|| "Failed to convert Icon to Image".to_string())?;
+
+    create_dir_all(&save_path).map_err(|err| err.to_string())?;
 
     image.save(&save_path).map_err(|err| err.to_string())?;
 
