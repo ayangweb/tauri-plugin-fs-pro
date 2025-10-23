@@ -311,7 +311,7 @@ pub async fn get_default_save_icon_path<R: Runtime>(
 /// let icon_path = icon(app.handle(), path, None).await?;
 /// println!("{}", icon_path);
 /// ```
-#[command]
+#[command(thread_safe = false)]
 pub async fn icon<R: Runtime>(
     app_handle: AppHandle<R>,
     path: PathBuf,
@@ -322,6 +322,8 @@ pub async fn icon<R: Runtime>(
     let save_path = options
         .and_then(|opt| opt.save_path)
         .unwrap_or(default_save_path);
+
+    create_dir_all(&save_path).map_err(|err| err.to_string())?;
 
     let icon_name = get_icon_name(path.clone()).await?;
 
@@ -336,8 +338,6 @@ pub async fn icon<R: Runtime>(
     let image = RgbaImage::from_raw(icon.width, icon.height, icon.pixels)
         .map(DynamicImage::ImageRgba8)
         .ok_or_else(|| "Failed to convert Icon to Image".to_string())?;
-
-    create_dir_all(&save_path).map_err(|err| err.to_string())?;
 
     image.save(&save_path).map_err(|err| err.to_string())?;
 
